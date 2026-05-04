@@ -1,8 +1,20 @@
-import { type Chat, type GeneratorController, type InferParsedConfig } from "@lmstudio/sdk";
+import {
+  type Chat,
+  type GeneratorController,
+  type InferParsedConfig,
+} from "@lmstudio/sdk";
 import { configSchematics, globalConfigSchematics } from "./config";
 import { createAiGateway } from "ai-gateway-provider";
 import { createUnified } from "ai-gateway-provider/providers/unified";
-import { jsonSchema, streamText, StreamTextResult, tool, type ModelMessage, type TextStreamPart, type ToolSet, } from "ai";
+import {
+  jsonSchema,
+  streamText,
+  StreamTextResult,
+  tool,
+  type ModelMessage,
+  type TextStreamPart,
+  type ToolSet,
+} from "ai";
 import type { AiGateway } from "ai-gateway-provider";
 /* -------------------------------------------------------------------------- */
 /*                                   Types                                    */
@@ -19,8 +31,6 @@ type ToolCallState = {
 /*                               Build helpers                                */
 /* -------------------------------------------------------------------------- */
 
-
-
 /** Build a pre-configured OpenAI client. */
 function createGateway(
   globalConfig: InferParsedConfig<typeof globalConfigSchematics>,
@@ -29,7 +39,7 @@ function createGateway(
     accountId: globalConfig.get("cloudflareAccountID"),
     gateway: globalConfig.get("cloudflareAIGatewayName"),
     apiKey: globalConfig.get("cloudflareAPIToken"),
-  })
+  });
 }
 
 /** Convert internal chat history to the format expected by OpenAI. */
@@ -48,7 +58,7 @@ function toOpenAIMessages(history: Chat): ModelMessage[] {
         break;
 
       case "assistant": {
-        const toolCalls = message.getToolCallRequests().map(toolCall => ({
+        const toolCalls = message.getToolCallRequests().map((toolCall) => ({
           type: "tool-call" as const,
           toolCallId: toolCall.id ?? "",
           toolName: toolCall.name,
@@ -74,15 +84,18 @@ function toOpenAIMessages(history: Chat): ModelMessage[] {
       }
 
       case "tool": {
-        const toolResults = message.getToolCallResults().map(toolCallResult => ({
-          type: "tool-result" as const,
-          toolCallId: toolCallResult.toolCallId ?? "",
-          toolName: toolCallNames.get(toolCallResult.toolCallId ?? "") ?? "tool",
-          output: {
-            type: "json" as const,
-            value: toolCallResult.content,
-          },
-        }));
+        const toolResults = message
+          .getToolCallResults()
+          .map((toolCallResult) => ({
+            type: "tool-result" as const,
+            toolCallId: toolCallResult.toolCallId ?? "",
+            toolName:
+              toolCallNames.get(toolCallResult.toolCallId ?? "") ?? "tool",
+            output: {
+              type: "json" as const,
+              value: toolCallResult.content,
+            },
+          }));
 
         if (toolResults.length) {
           messages.push({
@@ -100,13 +113,18 @@ function toOpenAIMessages(history: Chat): ModelMessage[] {
 
 /** Convert LM Studio tool definitions to OpenAI function-tool descriptors. */
 function toAITools(ctl: GeneratorController): ToolSet | undefined {
-  const entries = ctl.getToolDefinitions().map(t => [
-    t.function.name,
-    tool({
-      description: t.function.description,
-      inputSchema: jsonSchema(t.function.parameters ?? { type: "object", properties: {} }),
-    }),
-  ] as const);
+  const entries = ctl.getToolDefinitions().map(
+    (t) =>
+      [
+        t.function.name,
+        tool({
+          description: t.function.description,
+          inputSchema: jsonSchema(
+            t.function.parameters ?? { type: "object", properties: {} },
+          ),
+        }),
+      ] as const,
+  );
 
   return entries.length ? Object.fromEntries(entries) : undefined;
 }
@@ -137,7 +155,8 @@ async function consumeStream(
     }
 
     const argumentsObject =
-      parsedArguments ?? (current.arguments.length ? JSON.parse(current.arguments) : {});
+      parsedArguments ??
+      (current.arguments.length ? JSON.parse(current.arguments) : {});
 
     ctl.toolCallGenerationEnded({
       type: "function",
@@ -149,7 +168,6 @@ async function consumeStream(
   }
 
   for await (const part of stream) {
-
     switch (part.type) {
       case "text-delta": {
         ctl.fragmentGenerated(part.text);
@@ -182,13 +200,12 @@ async function consumeStream(
 
       case "tool-call": {
         const existing = toolCalls.get(part.toolCallId);
-        const current =
-          existing ?? {
-            id: part.toolCallId,
-            name: part.toolName,
-            arguments: "",
-            nameReported: false,
-          };
+        const current = existing ?? {
+          id: part.toolCallId,
+          name: part.toolName,
+          arguments: "",
+          nameReported: false,
+        };
 
         if (!existing) {
           toolCalls.set(part.toolCallId, current);
@@ -208,7 +225,9 @@ async function consumeStream(
 
       case "tool-error": {
         ctl.toolCallGenerationFailed(
-          part.error instanceof Error ? part.error : new Error(String(part.error)),
+          part.error instanceof Error
+            ? part.error
+            : new Error(String(part.error)),
         );
         toolCalls.delete(part.toolCallId);
         break;
@@ -234,24 +253,26 @@ export async function generate(ctl: GeneratorController, history: Chat) {
   const gateway = createGateway(globalConfig);
   const messages = toOpenAIMessages(history);
   const tools = toAITools(ctl);
-  const model = config.get("use_advanced_model") ? config.get("advanced_model") : `workers-ai/${config.get("model")}`;
+  const model = config.get("use_advanced_model")
+    ? config.get("advanced_model")
+    : `workers-ai/${config.get("model")}`;
 
   /* 2. Kick off streaming completion */
-  let stream
+  let stream;
   try {
-  stream = streamText({
-    model: gateway(unified(model)),
-    tools,
-    activeTools: tools ? Object.keys(tools) : undefined,
-    messages,
-    allowSystemInMessages: globalConfig.get("allowSystemInMessages"),
-    maxRetries: globalConfig.get("maxRetries"),
-    abortSignal: ctl.abortSignal,
-  });
-} catch (error) {
-  console.error("Error initiating generation:", error);
-  throw error;
-}
+    stream = streamText({
+      model: gateway(unified(model)),
+      tools,
+      activeTools: tools ? Object.keys(tools) : undefined,
+      messages,
+      allowSystemInMessages: globalConfig.get("allowSystemInMessages"),
+      maxRetries: globalConfig.get("maxRetries"),
+      abortSignal: ctl.abortSignal,
+    });
+  } catch (error) {
+    console.error("Error initiating generation:", error);
+    throw error;
+  }
 
   try {
     await consumeStream(stream.fullStream, ctl);

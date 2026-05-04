@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "lms dev",
     "push": "lms push",
-    "get-models": "tsx scripts/get-models.ts"
+    "get-models": "tsx scripts/get-models.ts",
+    "format": "prettier --write *.json tests/**/*.ts src/**/*.ts"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^24",
+    "prettier": "3.8.3",
     "tsx": "^4.19.4"
   }
 }
