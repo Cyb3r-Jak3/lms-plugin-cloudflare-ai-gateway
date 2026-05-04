@@ -2,7 +2,7 @@ import { type Chat, type GeneratorController, type InferParsedConfig } from "@lm
 import { configSchematics, globalConfigSchematics } from "./config";
 import { createAiGateway } from "ai-gateway-provider";
 import { createUnified } from "ai-gateway-provider/providers/unified";
-import { jsonSchema, streamText, tool, type ModelMessage, type TextStreamPart, type ToolSet } from "ai";
+import { jsonSchema, streamText, StreamTextResult, tool, type ModelMessage, type TextStreamPart, type ToolSet, } from "ai";
 import type { AiGateway } from "ai-gateway-provider";
 /* -------------------------------------------------------------------------- */
 /*                                   Types                                    */
@@ -237,7 +237,9 @@ export async function generate(ctl: GeneratorController, history: Chat) {
   const model = config.get("use_advanced_model") ? config.get("advanced_model") : `workers-ai/${config.get("model")}`;
 
   /* 2. Kick off streaming completion */
-  const stream = streamText({
+  let stream
+  try {
+  stream = streamText({
     model: gateway(unified(model)),
     tools,
     activeTools: tools ? Object.keys(tools) : undefined,
@@ -246,8 +248,15 @@ export async function generate(ctl: GeneratorController, history: Chat) {
     maxRetries: globalConfig.get("maxRetries"),
     abortSignal: ctl.abortSignal,
   });
+} catch (error) {
+  console.error("Error initiating generation:", error);
+  throw error;
+}
 
-  /* 3. Abort wiring & stream processing */
-  // wireAbort(ctl, stream);
-  await consumeStream(stream.fullStream, ctl);
+  try {
+    await consumeStream(stream.fullStream, ctl);
+  } catch (error) {
+    console.error("Error during stream consumption:", error);
+    throw error;
+  }
 }
