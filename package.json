@@ -1,0 +1,24 @@
+{
+  "name": "lms-plugin-cloudflare-ai-gateway",
+  "version": "1.0.0",
+  "description": "LM Studio plugin for Cloudflare AI Gateway",
+  "main": "index.js",
+  "scripts": {
+    "dev": "lms dev",
+    "push": "lms push",
+    "get-models": "tsx scripts/get-models.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@lmstudio/sdk": "1.5.0",
+    "ai": "^6.0.174",
+    "ai-gateway-provider": "^3.1.3",
+    "zod": "^4.4.2",
+    "zod-to-json-schema": "3.25.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "tsx": "^4.19.4"
+  }
+}
