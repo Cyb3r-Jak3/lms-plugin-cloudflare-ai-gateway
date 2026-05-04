@@ -1,7 +1,5 @@
 # Cloudflare AI Gateway for LM Studio
 
-![LM Studio](https://img.shields.io/badge/LM%20Studio?style=flat&color=purple&link=https%3A%2F%2Flmstudio.ai%2Fcyb3rjak3%2Fcloudflare-ai-gateway) ![GitHub](https://img.shields.io/badge/Source?style=flat&logo=github&color=purple&link=https%3A%2F%2Fgithub.com%2FCyb3r-Jak3%2Flms-plugin-cloudflare-ai-gateway)
-
 LM Studio plugin to connect to the Cloudflare AI Gateway, allowing you to use any model available in the gateway directly from LM Studio.
 
 Supports both models hosted with Cloudflare's Workers AI product as well as any model in the Cloudflare AI Gateway catalog, which includes models hosted by Cloudflare and third-party providers. Some models may require additional configuration in the Cloudflare dashboard, such as setting up billing.
