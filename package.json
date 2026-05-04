@@ -7,7 +7,8 @@
     "dev": "lms dev",
     "push": "lms push",
     "get-models": "tsx scripts/get-models.ts",
-    "format": "prettier --write *.json tests/**/*.ts src/**/*.ts"
+    "format": "prettier --write *.json src/**/*.ts scripts/**/*.ts",
+    "lint": "prettier --check *.json src/**/*.ts scripts/**/*.ts"
   },
   "author": "",
   "license": "ISC",
