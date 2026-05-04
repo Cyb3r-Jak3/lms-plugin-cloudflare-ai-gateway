@@ -11,9 +11,7 @@
     "skipLibCheck": true,
     "rootDir": "src",
     "outDir": "dist",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "resolveJsonModule": true
   }
 }
