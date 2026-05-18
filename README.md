@@ -6,8 +6,8 @@ Supports both models hosted with Cloudflare's Workers AI product as well as any 
 
 Getting Started:
 
-1. Create a new gateway in the Cloudflare dashboard and obtain the API key and any necessary model information. [Cloudflare Docs](https://developers.cloudflare.com/ai-gateway/get-started/)
-
+1. Create a new gateway in the Cloudflare dashboard and obtain the API key and gateway name. [Cloudflare Docs](https://developers.cloudflare.com/ai-gateway/get-started/)
+   1. You can also bring your own API keys for certain models, such as OpenAI, by following the instructions in the [Cloudflare documentation](https://developers.cloudflare.com/ai-gateway/configuration/bring-your-own-keys/).
 2. Install this plugin in LM Studio and enter your Cloudflare API key, account ID, AI Gateway name
 3. Select the desired model from the configuration options.
 4. Start using the gateway in your conversations!
