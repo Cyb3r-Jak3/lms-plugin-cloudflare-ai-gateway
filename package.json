@@ -1,6 +1,6 @@
 {
   "name": "lms-plugin-cloudflare-ai-gateway",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "LM Studio plugin for Cloudflare AI Gateway",
   "main": "index.js",
   "scripts": {
