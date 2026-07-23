@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^24",
-    "prettier": "3.9.5",
+    "prettier": "3.9.6",
     "tsx": "^4.19.4"
   }
 }
