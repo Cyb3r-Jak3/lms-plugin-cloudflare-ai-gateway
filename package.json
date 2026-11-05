@@ -20,7 +20,7 @@
     "zod-to-json-schema": "3.25.2"
   },
   "devDependencies": {
-    "@types/node": "^24",
+    "@types/node": "^26.0.0",
     "prettier": "3.9.10",
     "tsx": "^4.19.4"
   },
